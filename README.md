@@ -1,85 +1,54 @@
-# 📋 Template-Anleitung
+# Lung Cancer Survival Prediction
+> Predicting patient survival outcomes from a kaggle dataset using machine learning techniques
 
-> **Für Kursteilnehmer*innen:** Diese Sektion nach dem Setup deines Projekts löschen!
+## Project Overview
 
-## So verwenden Sie dieses Template:
-Dieses Template hilft dir, dein Data Science Projekt effizient zu organisieren und zu dokumentieren. Es bietet eine gängige Struktur, um deine Arbeit zu planen, durchzuführen und zu präsentieren.
+**Problem:** using clinical and risk factor data for lung cancer patients, can we predict whether a patient will survive?
 
-### 1. Template verwenden
-Templates können in GitHub über den Button **"Use this template" -> "Create a new repository"** in der oberen rechten Ecke in ein eigenes Repository überführt werden. Nutze diese Vorlage als Inspiration und passe sie an dein Projekt an! 
+**Goal:** Train a binary classifier(`Survived`) that prioritises recall (catching true positives).
 
-### 2. Projekt klonen
-Danach kannst du dein neues Repository direkt über VS Code klonen. Dazu öffnest du in VS Code die Kommando-Palette (Strg+Shift+P) bzw. (Cmd+Shift+P) auf dem Mac und gibst **"Git: Clone"** ein. Wähle dann "Clone from GitHub..." und melde dich ggf. bei GitHub an. Suche nach deinem Repository und wähle einen lokalen Ordner aus, in dem das Projekt gespeichert werden soll.
+**Methods:** Feature Engineering, Random Forest, XGBoost, Logistic Regression via GridSearchCV. Selected Random Forest with F1=0.75, Recall = 0.8919.
 
-### 3. Abhängigkeiten installieren
-Nachdem du das Repository geklont hast, musst du die Abhängigkeiten installieren. Öffne dazu ein neues Terminal in VS Code über die Menüleiste "Terminal"->"Neues Terminal" und führe die folgenden Befehle aus:
-
-```bash
-uv sync
-```
-
-### 4. Erweiterungen hinzufügen
-Für dieses Projekt empfehlen wir die Installation der folgenden VS Code Erweiterungen:
-- **Python** (Microsoft) - Bietet Unterstützung für Python-Entwicklung.
-- **Jupyter** (Microsoft) - Ermöglicht das Arbeiten mit Jupyter Notebooks direkt in VS Code.
-- **Even Better TOML** (tamasfe) - Verbessert die Bearbeitung von TOML-Dateien.
-- **Ruff** (Astral Software) - Ein schneller Linter für Python, der dir hilft, sauberen Code zu schreiben.
-- **Material Icon Theme** (PKief) - Verbessert die Dateisymbole in VS Code für eine bessere Übersicht.
-
-Dafür kannst du den Erweiterungs-Tab in VS Code öffnen (Symbol mit den vier Quadraten auf der linken Seitenleiste) und in die Suchleiste `@recommended` eingeben. Danach sollten dir die empfohlenen Erweiterungen angezeigt werden.
-
-### Notebooks ausführen
-Im Ordner `notebooks/` findest du ein Jupyter Notebook namens `01_exploration.ipynb`, das als Ausgangspunkt für deine Datenanalyse dient. Öffne das Notebook in VS Code und wähle oben rechts dein virtuelles Environment als Kernel aus. Führe die Zellen nacheinander aus. Wenn alles geklappt hat wird das Notebook einen Datensatz von Kaggle laden und im Ordner `data/` speichern.
-
-Von hier an kannst du mit deinem Projekt starten und die Vorlagen nach belieben anpassen.
-
-Schaue dir für weitere Informationen zum Template die Datei [docs/project.md](./docs/project.md) an.
-
-
-Für dein Projekt kannst du die folgenden Abschnitte in der `README.md` Datei anpassen, um dein Projekt zu beschreiben und zu präsentieren. Lösche anschließend diese Anleitung.
-
----
-
-# [DEIN PROJEKTTITEL HIER] 🚀
-
-> Eine kurze, prägnante Beschreibung deines Data Science Projekts in 1-2 Sätzen.
-
-## 📊 Projektübersicht
-
-**Problemstellung:** 
-<!-- Beschreibe das Problem, das du lösen möchtest -->
-
-**Ziel:** 
-<!-- Was ist das Hauptziel deines Projekts? -->
-
-**Methoden:** 
-<!-- Welche Techniken/Algorithmen verwendest du? -->
-
-
+**Dataset:** [🫁 Lung Cancer Clinical Dataset (2015–2025)](https://www.kaggle.com/datasets/zkskhurram/lung-cancer-clinical-dataset-20152025) with 1,500 values, and 41 features.
 
 ## Setup
+clone the repository and install uv
 
-Klone das Repository
-```bash
-# Repository klonen
-git clone [DEIN-REPO-LINK]
-cd [REPO-NAME]
+**Running the notebooks**
+
+1. notebooks/01_exploration.ipynb - EDA, class distribution, feature correlations
+2. notebooks/02_preparation.ipynb - feature engineering, train/test split -> data/processed
+3. notebooks/03_baseline.ipynb - Random Forest (without tuning)
+4. notebooks/04_modelling.ipynb - Hyperparameter tuning, model comparison, final model as pickle saved
+
+# Key Findings
+| Model               | F1        | ROC-AUC   | Precision | Recall |
+| ------------------- | --------- | --------- | --------- | ------ |
+| Random Forest       | **0.750** | 0.850     | 0.647     | 0.892  |
+| XGBoost             | 0.738     | **0.854** | 0.660     | 0.838  |
+| Logistic Regression | 0.742     | 0.844     | 0.635     | 0.892  |
+
+
+**Top 5 Predictors:** `Cancer_Stage`, `Metastasis`, `Treatment_Surgery`, `Symptom_Count`, `BMI`
+
+# Project Structure
+
+```text
+  ├── data/
+  │   ├── raw/          # Raw data (not committed)
+  │   └── processed/    # Splits + saved model
+  ├── notebooks/
+  │   ├── pipelines.py  # Shared column, definitions and preprocessing functions      
+  │   ├── 01_exploration.ipynb
+  │   ├── 02_preparation.ipynb
+  │   ├── 03_baseline.ipynb
+  │   └── 04_modelling.ipynb
+  └── src/core/
+      └── data.py       # Kaggle data      
+  loading utility
 ```
 
-Installiere [uv](https://uv.dev) (falls noch nicht installiert) und synchronisiere die Abhängigkeiten
-```bash
-# Dependencies installieren
-uv sync
-```
-
-### Ausführung
-
-Notebooks in dieser Reihenfolge ausführen:
-1. notebooks/01_exploration.ipynb
-<!--
-2. notebooks/02_preprocessing.ipynb
-3. notebooks/03_modeling.ipynb
-4. notebooks/04_results.ipynb
--->
-
-
+# Future recommendations
+- test on larger datasets.
+- combine with image learning.
+- switch to regression tasks
